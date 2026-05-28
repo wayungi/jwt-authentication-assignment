@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const authenticateToken = require("./middleware/authMiddleware");
 const app = express();
 
 app.use(express.json());
@@ -23,4 +24,11 @@ app.post("/login", (req, res) => {
 
     res.json({accessToken, refreshToken})
 
+})
+
+app.get("/dashboard", authenticateToken, (req, res) => {
+    res.json({
+        message: "Congs, you have successfully hit the authenitcated route. You were successfully authenticated",
+        user: req.user
+    })
 })
