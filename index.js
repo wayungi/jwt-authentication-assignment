@@ -32,3 +32,5 @@ app.get("/dashboard", authenticateToken, (req, res) => {
         user: req.user
     })
 })
+
+app.listen( PORT, () => { console.log(`server running on port ${PORT}`)})
