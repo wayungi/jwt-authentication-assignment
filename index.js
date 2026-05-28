@@ -42,9 +42,8 @@ app.post("/refresh", (req, res) => {
     if(!refreshToken) return res.sendStatus(401);
     jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, { clockTolerance: 300 }, (err, user) => {
         if(err) return res.sendStatus(403)
-        })
-
-    const newAccessToken = jwt.sign({username: user.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "5m"})
+        const newAccessToken = jwt.sign({username: user.username, id: user.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "5m"})
+    })
     res.json({accessToken: newAccessToken})
 
 })
