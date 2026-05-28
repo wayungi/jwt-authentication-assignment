@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const authenticateToken = require("./middleware/authMiddleware");
+const bcrypt = require("bcrypt");
 const app = express();
 
 app.use(express.json());
@@ -10,14 +11,17 @@ const PORT = process.env.PORT || 3000;
 //TEST USER
 const user = {
     id:1,
-    username:"wayncis",
-    password: "pass@123"
+    username: "wayncis",
+    password: bcrypt.hashSync("pass@123", 10)
 }
 
-app.post("/login", (req, res) => {
+app.post("/login", async(req, res) => {
     const {username, password} = req.body;
 
-    if(username !== user.username || password !== user.password) return res.status(401).json({message: "invalid credentials"})
+    if(username !== user.username) return res.status(401).json({message: "invalid credentials"})
+
+    const isMatched = await bcrypt.compare(password, user.password);
+    if(!isMatched) return res.status(401).json({message: "invalid credentials"})
 
     const accessToken = jwt.sign({username, id: user.id}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: "5m"})
     const refreshToken = jwt.sign({username, id: user.id}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: "3d"})
